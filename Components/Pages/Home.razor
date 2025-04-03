@@ -1,7 +1,120 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Conways Game of Life</PageTitle>
+<div class="card sticky-top" id="top_div_card">
+    <div class="d-flex flex-row">
+        <div class="p-2">
+            <button type="button" class="btn btn-primary" id="button" onclick="@start">Iterate</button>
+        </div>
+        <div class="p-2">
+            @if (!running) {
+                <button type="button" class="btn btn-danger" id="button" onclick="@run">Run</button>
+            }else {
+                <button type="button" class="btn btn-danger" id="button" onclick="@pause">Pause</button>
+            }
+        </div>
+        <div class="d-flex flex-row">
+            <div class="p-2">
+                <label for="speedRange" class="form-label">Speed Slider</label>
+                <label for="speedRange" class="form-label">Current Speed = @speed ms per gen</label>
+            </div>
+            <div class="p-2">
+                <input type="range" class="form-range" id="speedRange" min="1" max="2000" @bind="@speed" @bind:event="oninput"/>
+            </div>
+            <div class="p-2">
+                <p>Gen Count: @gen_count</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+@for (int i = 0; i < rows ;i++) {
+    var loci = i;
+<div id="c_col">
+    @for (int y = 0; y < columns ;y++) {
+        var locy = y;
+        <input type="checkbox" class="check_item" id="@locy,@loci" name="@y,@i" @bind="@check[locy,loci]" > 
+    }
+</div>
+}
+
+@code {
+    private static int rows = 150;
+    private static int columns = 150;
+    private bool[,] check = new bool[columns,rows];
+    private bool running = false;
+    private int speed {get; set;} = 1000;
+    private int gen_count = 0;
+
+
+    private void pause() {
+        running = false;
+    }
+
+    private async void run() {
+        running = true;
+        while (running) {
+            start();
+            StateHasChanged();
+            await Task.Delay(speed);
+        }
+    }
+
+    private void start() {
+        gen_count++;
+        bool[,] gen = new bool[rows,columns];
+        Array.Copy(check,gen,check.Length);
+
+            for (int i = 0; i < rows ;i++) {            
+                for (int y = 0; y < columns ;y++) {
+                    check[y,i] = rule1(gen,y,i);
+                }
+            }        
+
+    }
+
+    private bool rule1(bool[,] c, int i, int y) {
+        int count = 0;
+
+        if (i+1 < rows) {
+            if (c[i+1,y]) count++;
+        }
+
+        if (i-1 >= 0) {
+            if (c[i-1,y]) count++;
+        }
+
+        if (i+1 < rows && y-1 >= 0) {
+            if (c[i+1,y-1]) count++;
+        }
+        
+        if (i+1 < rows && y+1 < columns) {
+            if (c[i+1,y+1]) count++;
+        }
+        
+        if (y+1 < columns) {
+            if (c[i,y+1]) count++;
+        }
+        
+        if (y-1 >= 0) {
+            if (c[i,y-1]) count++;
+        }
+        
+        if (i-1 >= 0 && y+1 < columns) {
+            if (c[i-1,y+1]) count++;
+        }
+        
+        if (i-1 >= 0 && y-1 >= 0){
+            if (c[i-1,y-1]) count++;
+        }
+
+        if (c[i,y] && count < 2) return false;
+        if (c[i,y] && (count == 2 || count == 3)) return true;
+        if (c[i,y] && count > 3) return false;
+        if (!c[i,y] && count == 3) return true;
+
+        return false;
+    }
+}

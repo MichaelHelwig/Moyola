@@ -1,0 +1,15 @@
+#c_col {
+    height: 14px;
+    width: 150%;
+}
+#speedRange {
+    direction: rtl
+}
+
+.check_item {
+    display: inline;
+}
+
+#top_div_card {
+    width: 150%;
+}
