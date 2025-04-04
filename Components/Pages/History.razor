@@ -1,0 +1,25 @@
+@page "/History"
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+<PageTitle>Promotion Grid</PageTitle>
+
+<h1>Promotion Grid Example</h1>
+
+<QuickGrid Items="grid">
+    <PropertyColumn Property="@(p => p.GridID)" Sortable="true" />
+    <PropertyColumn Property="@(p => p.GridName)" Sortable="true" />
+    <PropertyColumn Property="@(p => p.CreationDate)" Format="yyyy-MM-dd hh:mm:ss" Sortable="true" />
+</QuickGrid>
+
+@code {
+    private record Grid(int GridID, string GridName, DateTime CreationDate, bool[,] data);
+
+    
+
+    private IQueryable<Grid> grid = new[]
+    {
+        new Grid(10895, "test1", DateTime.Now, new bool[,]{ { true }, { false } }),
+        new Grid(10944, "test2", DateTime.Now, new bool[,]{ { true }, { false } }),
+
+    }.AsQueryable();
+}

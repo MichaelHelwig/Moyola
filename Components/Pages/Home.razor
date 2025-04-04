@@ -14,7 +14,6 @@
                 <button type="button" class="btn btn-danger" id="button" onclick="@pause">Pause</button>
             }
         </div>
-        <div class="d-flex flex-row">
             <div class="p-2">
                 <label for="speedRange" class="form-label">Speed Slider</label>
                 <label for="speedRange" class="form-label">Current Speed = @speed ms per gen</label>
@@ -25,6 +24,9 @@
             <div class="p-2">
                 <p>Gen Count: @gen_count</p>
             </div>
+        <div class="p-2">
+            <button type="button" class="btn btn-success" onclick="@save">Save</button>
+            <input type="text" class="form-text" @bind="@save_name" @bind:event="oninput"/>
         </div>
     </div>
 </div>
@@ -47,8 +49,11 @@
     private bool running = false;
     private int speed {get; set;} = 1000;
     private int gen_count = 0;
+    private string save_name = "";
 
-
+    private void save() {
+        Console.WriteLine(save_name);
+    }
     private void pause() {
         running = false;
     }
